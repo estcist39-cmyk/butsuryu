@@ -136,3 +136,95 @@
                     <div id="ref-context" class="text-xs font-mono bg-white p-3 rounded border border-slate-200 overflow-x-auto text-slate-600 max-h-40 whitespace-pre-wrap">
                         質問を実行すると参照されたマスタデータ行がここに抽出表示されます。
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Live Spreadsheet View -->
+        <section id="sec-logs" class="hidden bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-teal-600"></i> 問い合わせ内容 Googleスプレッドシート
+                    </h2>
+                    <p class="text-xs text-slate-500">高精度AI回答と実行日時が自動記録されます。</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="fetchLogsFromGoogleSheet()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2 px-3 rounded-lg border transition flex items-center gap-1">
+                        <i class="fa-solid fa-rotate-right"></i> シート再読み込み
+                    </button>
+                    <button onclick="exportCSV('問い合わせ内容')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-3 rounded-lg shadow transition flex items-center gap-1">
+                        <i class="fa-solid fa-file-csv"></i> CSVダウンロード
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto border border-slate-200 rounded-lg max-h-[500px]">
+                <table class="w-full text-xs text-left text-slate-600">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0 border-b">
+                        <tr>
+                            <th class="px-4 py-3 min-w-[140px]">日時</th>
+                            <th class="px-4 py-3 min-w-[180px]">質問内容</th>
+                            <th class="px-4 py-3 min-w-[140px]">担当エージェント</th>
+                            <th class="px-4 py-3 min-w-[300px]">回答結果</th>
+                            <th class="px-4 py-3 min-w-[110px]">推論モデル</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-table-body" class="divide-y divide-slate-200 bg-white">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TAB 3: Master Tables -->
+        <section id="sec-master" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <label class="text-xs font-bold text-slate-600">閲覧マスタ:</label>
+                        <select id="master-select" onchange="renderMasterTable()" class="text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none">
+                            <option value="症状詳記返戻対応">症状詳記返戻対応.csv (16件全件)</option>
+                            <option value="物流管理">物流管理.csv (6件全件)</option>
+                            <option value="物流マスタ">物流マスタ.csv (4件全件)</option>
+                        </select>
+                    </div>
+                    <button onclick="exportCSV(document.getElementById('master-select').value)" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition flex items-center gap-1">
+                        <i class="fa-solid fa-download"></i> CSVエクスポート
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-lg max-h-[450px]">
+                    <table class="w-full text-xs text-left text-slate-600">
+                        <thead id="master-thead" class="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0 border-b">
+                            <!-- Dynamic Header -->
+                        </thead>
+                        <tbody id="master-tbody" class="divide-y divide-slate-200 bg-white">
+                            <!-- Dynamic Body -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modals -->
+    <div id="apikey-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-lg w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-key text-amber-500"></i> Gemini API Key 設定
+                </h3>
+                <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3 text-xs text-slate-600">
+                <p>Google AI Studio（https://aistudio.google.com/）で発行したGemini APIキーを入力してください。</p>
+                <input type="password" id="gemini-key-input" class="w-full p-2.5 border rounded-lg font-mono text-xs outline-none focus:ring-2 focus:ring-teal-500" placeholder="AIzaSy...">
+            </div>
+            <div class="flex justify-end space-x-2 pt-3 border-t">
+                <button onclick="closeApiKeyModal()" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">キャンセル</button>
+                <button onclick="saveApiKey()" class="px-4 py-2 text-xs font-medium bg-amber-500 text-slate-900 font-bold hover:bg-amber-600 rounded-lg shadow">保存</button>
+            </div>
+        </div>
+    </div>
